@@ -19,6 +19,30 @@ function stopServer() {
 process.on( 'SIGINT', stopServer )
 process.on( 'SIGTERM', stopServer )
 
+const health = require('@cloudnative/health-connect');
+
+let healthCheck = new health.HealthChecker();
+
+const livePromise = () => new Promise((resolve, _reject) => {
+  const appFunctioning = true;
+  
+  if (appFunctioning) {
+    resolve();
+  } else {
+    reject(new Error("App is not functioning correctly"));
+  }
+});
+let liveCheck = new health.LivenessCheck("LivenessCheck", livePromise);
+healthCheck.registerLivenessCheck(liveCheck);
+
+//readiness
+//let readyCheck = new health.PingCheck("/services/projects");
+let readinessCheck = new health.LivenessCheck("ReadinessCheck", livePromise);
+healthCheck.registerReadinessCheck(readinessCheck);
+
+app.use('/live', health.LivenessEndpoint(healthCheck));
+app.use('/ready', health.ReadinessEndpoint(healthCheck));
+
 app.use( cors() )
 app.use( (req, res, next ) => {
   console.info( `${req.method} ${req.url}` )

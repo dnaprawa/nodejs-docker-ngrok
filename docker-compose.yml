@@ -13,6 +13,8 @@ services:
       
   ngrok:
     image: wernight/ngrok
+    volumes:
+      - ./ngrok.yml:/home/ngrok/.ngrok2/ngrok.yml
     ports:
       - "4040:4040"
     command: ["ngrok", "http", "backend:8080"]

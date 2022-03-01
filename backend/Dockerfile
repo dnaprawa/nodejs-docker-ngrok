@@ -1,4 +1,4 @@
-FROM node:14.4.0-buster-slim
+FROM node:16.13.1-buster-slim
 
 ARG NODE_ENV=production
 ENV NODE_ENV $NODE_ENV
@@ -17,4 +17,3 @@ COPY . /app
 USER node
 
 CMD [ "node", "src/server.js" ]
-
